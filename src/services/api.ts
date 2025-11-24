@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 // API Configuration and service
 // Use /api proxy en desarrollo, URL completa en producción
-const BASE_URL = import.meta.env.MODE === 'development' ? '/api' : 'https://api.saboresan.lat';
+const BASE_URL = import.meta.env.MODE === 'development' ? '/api' : 'https://saboresan.lat';
 
 export const apiClient = {
   baseURL: BASE_URL,
@@ -58,35 +58,107 @@ export const apiClient = {
     });
   },
 
-  async register(data: {
-    username: string;
-    email: string;
-    password: string;
-    first_name?: string;
-    last_name?: string;
-  }) {
-    return this.request('/auth/register', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
+  async register(username: string, password: string) {
+    const url = `${BASE_URL}/auth/register`;
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!response.ok) {
+        let errorBody: any = null;
+        try {
+          errorBody = await response.json();
+        } catch (e) {
+          errorBody = await response.text().catch(() => null);
+        }
+
+        // Manejar errores específicos
+        if (response.status === 400) {
+          throw new Error('El usuario ya existe');
+        }
+        if (response.status === 422) {
+          const errMsg = errorBody?.detail || 'Errores de validación en los datos';
+          throw new Error(errMsg);
+        }
+        const errMsg = errorBody?.message || errorBody?.detail || `Error ${response.status}`;
+        throw new Error(errMsg);
+      }
+
+      return await response.json();
+    } catch (error) {
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('No se puede conectar al servidor');
+      }
+      throw error;
+    }
   },
 
   // Profile/Usuario endpoints
   async createProfile(profileData: {
     user_id: number;
-    nombre?: string;
-    apellido?: string;
-    email?: string;
-    foto_perfil?: string;
-    genero?: "M" | "F" | "O";
-    fecha_nacimiento?: string;
-    telefono?: string;
-    estado?: string;
+    nombre: string;
+    apellido: string;
+    email: string;
+    foto_perfil: string | null;
+    genero: "masculino" | "femenino" | "otro";
+    fecha_nacimiento: string;
+    telefono: string;
+    estado: "activo" | "inactivo";
   }) {
-    return this.request('/usuario/', {
-      method: 'POST',
-      body: JSON.stringify(profileData),
-    });
+    const url = `${BASE_URL}/usuario/`;
+    const token = localStorage.getItem('access_token');
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(profileData),
+      });
+
+      if (!response.ok) {
+        let errorBody: any = null;
+        try {
+          errorBody = await response.json();
+        } catch (e) {
+          errorBody = await response.text().catch(() => null);
+        }
+
+        // Manejar errores específicos
+        if (response.status === 400) {
+          throw new Error('El email ya está registrado');
+        }
+        if (response.status === 422) {
+          const errMsg = errorBody?.detail || 'Error en los campos del perfil';
+          throw new Error(errMsg);
+        }
+        if (response.status === 500) {
+          throw new Error('Error interno del servidor');
+        }
+        const errMsg = errorBody?.message || errorBody?.detail || `Error ${response.status}`;
+        throw new Error(errMsg);
+      }
+
+      return await response.json();
+    } catch (error) {
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error('No se puede conectar al servidor');
+      }
+      throw error;
+    }
   },
 
   async getProfile(userId: number) {
