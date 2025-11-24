@@ -58,7 +58,7 @@
       open: true,
       proxy: {
         '/api': {
-          target: 'https://saboresan.lat',
+          target: 'http://98.95.89.128',
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
