@@ -5,6 +5,8 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { apiClient, setAuthToken } from '../services/api';
+import logo from '../images/logo.png';
+
 
 interface LoginProps {
   onLogin: () => void;
@@ -60,7 +62,7 @@ export default function Login({ onLogin }: LoginProps) {
                 <div className="inline-flex items-center gap-3 mb-4">
                   <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#FF5733] to-[#FFC300] flex items-center justify-center text-3xl">
                       <img
-                        src="src/images/logo.png"
+                        src={logo} 
                         alt="SaborEsan Logo"
                         className="w-12 h-12 rounded-full object-cover shadow-xl border-2 border-white ring-2 ring-orange-200 transform transition-transform duration-200 hover:scale-105"
                       />

@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Home, BarChart3, Upload, History, User, BookOpen, FileText, Calendar } from 'lucide-react';
+import logo from '../images/logo.png';
 
 export function Navbar() {
   const location = useLocation();
@@ -22,7 +23,7 @@ export function Navbar() {
           <div className="flex items-center gap-2">
             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#FF6A3A] to-[#FFD166] flex items-center justify-center p-1 shadow-lg">
               <img
-                src="src/images/logo.png"
+                src={logo} 
                 alt="SaborEsan Logo"
                 className="w-10 h-10 rounded-full object-cover shadow-sm border-2 border-white/80 ring-4 ring-orange-100 transition-transform duration-200 transform hover:scale-105"
               />
