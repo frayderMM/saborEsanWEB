@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 // API Configuration and service
 // Use /api proxy en desarrollo, URL completa en producción
-const BASE_URL = import.meta.env.MODE === 'development' ? '/api' : 'https://saboresan.lat';
+const BASE_URL = import.meta.env.MODE === 'development' ? '/api' : 'https://api.saboresan.lat';
 
 export const apiClient = {
   baseURL: BASE_URL,
