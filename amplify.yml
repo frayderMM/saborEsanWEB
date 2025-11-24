@@ -1,9 +1,8 @@
-version: 1
 frontend:
   phases:
     preBuild:
       commands:
-        - npm install
+        - npm ci
     build:
       commands:
         - npm run build
@@ -14,3 +13,7 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
+  redirectRules:
+    - source: "</^[^.]+$/>"
+      target: "/index.html"
+      status: "200"
